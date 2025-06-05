@@ -1,5 +1,9 @@
-import streamlit as st import pandas as pd import io from reportlab.lib.pagesizes import A4 from reportlab.pdfgen import canvas from datetime import date
-
+import streamlit as st
+import pandas as pd
+import io
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from datetime import date
 st.set_page_config(page_title="Template ESG VSME", layout="centered")
 
 st.title("🟢 Compilazione semplificata - Bilancio di Sostenibilità VSME")
