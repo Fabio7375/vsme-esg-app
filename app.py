@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import io
 
 st.set_page_config(page_title="Template ESG VSME", layout="centered")
 
@@ -58,7 +59,7 @@ with governance_section:
     anticorruzione = st.radio("Politica anticorruzione presente?", ["Sì", "No"])
     whistle = st.radio("Sistema di segnalazione anonima presente?", ["Sì", "No"])
 
-# Salvataggio
+# 6. Esportazione Excel
 if st.button("📥 Esporta Report in Excel"):
     data = {
         "Nome Impresa": [azienda], "Settore": [settore], "Paese": [paese], "Referente": [referente],
@@ -72,5 +73,16 @@ if st.button("📥 Esporta Report in Excel"):
         "Diversity": [diversity], "Consiglio Amm.": [consiglio], "Codice Etico": [codice_etico],
         "Anticorruzione": [anticorruzione], "Whistleblowing": [whistle]
     }
+
     df = pd.DataFrame(data)
-    st.download_button("📄 Scarica il file Excel", df.to_excel(index=False), file_name="report_esg_vsme.xlsx")
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Report ESG VSME')
+    output.seek(0)
+
+    st.download_button(
+        label="📄 Scarica il file Excel",
+        data=output,
+        file_name="report_esg_vsme.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
