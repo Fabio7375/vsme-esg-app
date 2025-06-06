@@ -7,123 +7,133 @@ from datetime import date
 
 st.set_page_config(page_title="Template ESG VSME", layout="centered")
 
-st.title("🟢 Compilazione semplificata - Bilancio di Sostenibilità VSME")
+st.title("🟢 Bilancio di Sostenibilità VSME")
 
 st.markdown("""
-Compila i campi sottostanti per generare automaticamente un report ESG semplificato,
-adatto per micro e piccole imprese secondo il modello VSME (EFRAG).
+Applicazione ispirata al VSME Digital Template (EFRAG) e alla guida ODCEC 2025 per la rendicontazione semplificata ESG delle microimprese.
 """)
 
-# --- SEZIONI NARRATIVE (da documento ODCEC) ---
-st.header("📘 Sezioni narrative VSME")
-
-modello_business = st.text_area("1. Modello di business 🟥 Obbligatorio", help="Descrivi in modo sintetico il core business dell'impresa, i prodotti o servizi principali, il mercato di riferimento")
-catena_valore = st.text_area("2. Catena del valore 🟧 Opzionale", help="Indica gli attori principali a monte e a valle (es. fornitori, clienti, distributori)")
-strategia_esg = st.text_area("3. Strategia ESG 🟥 Obbligatorio", help="Quali sono le priorità e gli obiettivi dell'impresa in ambito ambientale, sociale e di governance?")
-impatti_rischi = st.text_area("4. Impatti, rischi e opportunità 🟨 Narrativo guidato", help="Descrivi i principali rischi ESG legati all’attività e le eventuali opportunità")
-politiche = st.text_area("5. Politiche e obiettivi ESG 🟧 Opzionale", help="Elenca politiche attuate o in fase di implementazione e gli obiettivi dichiarati")
-
-# --- INDICATORI ESG ---
-st.header("📊 Indicatori ESG")
-
-azienda = st.text_input("Nome dell’impresa")
-settore = st.text_input("Settore di attività")
-paese = st.text_input("Paese")
+# --- ANAGRAFICA IMPRESA ---
+st.header("1️⃣ Anagrafica impresa")
+azienda = st.text_input("Nome dell’impresa 🟥")
+settore = st.text_input("Settore di attività 🟥")
+paese = st.text_input("Paese 🟥")
+referente = st.text_input("Referente")
+email = st.text_input("Email")
 dipendenti = st.number_input("Numero di dipendenti", min_value=0, step=1)
 fatturato = st.number_input("Fatturato (€)", min_value=0.0, step=1000.0)
+attivo = st.number_input("Totale attivo (€)", min_value=0.0, step=1000.0)
 
+# --- NARRATIVI ESG ---
+st.header("2️⃣ Informazioni narrative")
+modello_business = st.text_area("Modello di business 🟥")
+catena_valore = st.text_area("Catena del valore")
+strategia_esg = st.text_area("Strategia ESG 🟥")
+impatti_rischi = st.text_area("Impatti, rischi e opportunità 🟥")
+obiettivi = st.text_area("Obiettivi ESG")
+governance = st.text_area("Struttura di governance ESG")
+stakeholder = st.text_area("Coinvolgimento stakeholder")
+
+# --- AMBIENTE ---
+st.header("3️⃣ Ambiente")
+energia = st.number_input("Consumo energetico (kWh)", min_value=0.0)
 energia_rinnovabile = st.slider("Quota energia rinnovabile (%)", 0, 100, 0)
-riciclo = st.slider("% Rifiuti riciclati", 0, 100, 0)
-donne = st.slider("% Donne nella forza lavoro", 0, 100, 0)
-formazione = st.number_input("Ore formazione per dipendente", min_value=0.0)
-infortuni = st.number_input("Infortuni sul lavoro", min_value=0, step=1)
+emissioni = st.number_input("Emissioni gas serra (tCO₂eq)", min_value=0.0)
+acqua = st.number_input("Consumo idrico (m³)", min_value=0.0)
+rifiuti = st.number_input("Rifiuti prodotti (kg)", min_value=0.0)
+riciclo = st.slider("Percentuale rifiuti riciclati (%)", 0, 100, 0)
 
-# --- WARNING AUTOMATICI ---
+# --- SOCIALE ---
+st.header("4️⃣ Sociale")
+donne = st.slider("Percentuale donne nella forza lavoro", 0, 100, 0)
+donne_mgmt = st.slider("Percentuale donne in ruoli manageriali", 0, 100, 0)
+formazione = st.number_input("Ore formazione medie per dipendente", min_value=0.0)
+infortuni = st.number_input("Numero di infortuni", min_value=0)
+turnover = st.slider("Tasso di turnover (%)", 0, 100, 0)
+diversity = st.text_area("Politica per diversità e inclusione")
+
+# --- GOVERNANCE ---
+st.header("5️⃣ Governance")
+consiglio = st.radio("Consiglio di amministrazione presente?", ["Sì", "No"])
+codice_etico = st.radio("Codice etico presente?", ["Sì", "No"])
+anticorruzione = st.radio("Politica anticorruzione?", ["Sì", "No"])
+whistle = st.radio("Sistema whistleblowing?", ["Sì", "No"])
+
+# --- COMMENTO DEL PROFESSIONISTA ---
+st.header("6️⃣ Commento del professionista")
+commento_professionista = st.text_area("Nota a cura del revisore/commercialista")
+
+# --- CHECKLIST FINALE ---
+st.header("✅ Checklist automatica")
 if energia_rinnovabile == 0:
-    st.warning("⚠️ Nessuna quota di energia rinnovabile indicata: verifica se è corretto.")
+    st.warning("⚠️ Energia rinnovabile non presente: verifica la correttezza.")
 if donne == 0:
-    st.warning("⚠️ Nessuna presenza femminile segnalata: verifica la correttezza del dato.")
+    st.warning("⚠️ Nessuna presenza femminile: controlla il dato.")
 if formazione < 2:
-    st.info("ℹ️ Ore di formazione molto basse: considera se si tratta di una media reale o assente.")
-if not modello_business or not strategia_esg:
-    st.error("❌ Compila almeno le sezioni obbligatorie: Modello di business e Strategia ESG.")
+    st.info("ℹ️ Ore di formazione molto basse.")
+if not all([azienda, settore, paese, modello_business, strategia_esg, impatti_rischi]):
+    st.error("❌ Compila tutti i campi obbligatori (🟥) prima di esportare.")
+else:
+    st.success("✅ Tutti i campi obbligatori sono compilati. Puoi procedere.")
 
-# --- COMMENTI AUTOMATICI ---
-st.subheader("📝 Commento sintetico automatico")
+# --- COMMENTI AUTOMATICI ESG ---
+st.subheader("📌 Sintesi automatica ESG")
 commenti = []
 if energia_rinnovabile > 50:
-    commenti.append("L'azienda mostra un buon impegno nella transizione energetica.")
-else:
-    commenti.append("La quota di energia rinnovabile può essere migliorata.")
-if donne < 30:
-    commenti.append("La rappresentanza femminile appare bassa: valutare politiche inclusive.")
-if formazione > 8:
-    commenti.append("Buon livello di formazione interna al personale.")
-if infortuni > 3:
-    commenti.append("Attenzione: numero di infortuni elevato rispetto alla media.")
+    commenti.append("Buona quota di energia rinnovabile.")
 if riciclo > 60:
-    commenti.append("Ottimo tasso di riciclo dei rifiuti.")
+    commenti.append("Ottima gestione dei rifiuti.")
+if donne < 30:
+    commenti.append("Bassa rappresentanza femminile.")
+if formazione > 8:
+    commenti.append("Formazione interna sopra la media.")
+if infortuni > 3:
+    commenti.append("Attenzione al tema sicurezza.")
 for c in commenti:
     st.markdown(f"- {c}")
 
-# --- COMMENTO DEL PROFESSIONISTA ---
-st.header("🧾 Commento del professionista")
-commento_professionista = st.text_area("Spazio riservato al commercialista o revisore", help="Sintesi delle osservazioni professionali a conclusione del bilancio ESG")
-
-# --- CHECKLIST DI COMPLETAMENTO ---
-st.header("✅ Checklist di completamento")
-checklist = [
-    modello_business != "",
-    strategia_esg != "",
-    azienda != "",
-    settore != ""
-]
-if all(checklist):
-    st.success("Tutti i requisiti minimi risultano compilati. Puoi generare il report.")
-else:
-    st.warning("Alcuni campi fondamentali non sono compilati: controlla le sezioni obbligatorie.")
-
-# --- ESPORTAZIONE EXCEL ---
-if st.button("📥 Esporta Report in Excel"):
+# --- EXPORT EXCEL ---
+if st.button("📥 Esporta Excel"):
     data = {
-        "Nome Impresa": [azienda], "Settore": [settore], "Paese": [paese],
-        "Dipendenti": [dipendenti], "Fatturato": [fatturato],
-        "Energia Rinnovabile %": [energia_rinnovabile], "Riciclo %": [riciclo],
-        "% Donne": [donne], "Formazione Ore": [formazione], "Infortuni": [infortuni],
-        "Modello di business": [modello_business],
-        "Strategia ESG": [strategia_esg],
-        "Catena del valore": [catena_valore],
-        "Impatti e rischi": [impatti_rischi],
-        "Politiche e obiettivi": [politiche],
-        "Commento professionista": [commento_professionista]
+        "Impresa": [azienda], "Settore": [settore], "Paese": [paese],
+        "Referente": [referente], "Email": [email],
+        "Dipendenti": [dipendenti], "Fatturato €": [fatturato], "Attivo €": [attivo],
+        "Modello business": [modello_business], "Catena valore": [catena_valore], "Strategia ESG": [strategia_esg],
+        "Impatti e rischi": [impatti_rischi], "Obiettivi": [obiettivi], "Governance": [governance],
+        "Stakeholder": [stakeholder], "Energia kWh": [energia], "Energia Rinnovabile %": [energia_rinnovabile],
+        "Emissioni CO2": [emissioni], "Acqua m³": [acqua], "Rifiuti kg": [rifiuti], "Riciclo %": [riciclo],
+        "% Donne": [donne], "% Donne Mgmt": [donne_mgmt], "Formazione h": [formazione],
+        "Infortuni": [infortuni], "Turnover %": [turnover], "Diversità": [diversity],
+        "Consiglio": [consiglio], "Codice Etico": [codice_etico],
+        "Anticorruzione": [anticorruzione], "Whistleblowing": [whistle],
+        "Nota Revisore": [commento_professionista]
     }
     df = pd.DataFrame(data)
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df.to_excel(writer, index=False, sheet_name='ESG Report')
-    output.seek(0)
-    st.download_button("📄 Scarica il file Excel", output, file_name="report_esg_vsme.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
+        df.to_excel(writer, index=False, sheet_name="ESG VSME")
+    buffer.seek(0)
+    st.download_button("📄 Scarica Excel", buffer, file_name="bilancio_esg_vsme.xlsx")
 
-# --- ESPORTAZIONE PDF ---
-if st.button("📄 Genera PDF del Report"):
+# --- EXPORT PDF ---
+if st.button("📄 Genera PDF"):
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
     pdf.setFont("Helvetica", 11)
     pdf.drawString(30, 800, f"Bilancio ESG VSME - {azienda}")
     pdf.drawString(30, 785, f"Data: {date.today().isoformat()}")
-    pdf.drawString(30, 765, f"Settore: {settore} | Paese: {paese}")
-    pdf.drawString(30, 745, f"Dipendenti: {dipendenti} | Fatturato: €{fatturato:.2f}")
-    pdf.drawString(30, 725, f"Quota energia rinnovabile: {energia_rinnovabile}%")
-    pdf.drawString(30, 710, f"Riciclo: {riciclo}% | Donne: {donne}% | Formazione: {formazione}h | Infortuni: {infortuni}")
-    pdf.drawString(30, 690, "Commenti sintetici:")
-    y = 675
+    pdf.drawString(30, 765, f"Settore: {settore} | Paese: {paese} | Dipendenti: {dipendenti}")
+    pdf.drawString(30, 745, f"Fatturato: €{fatturato} | Attivo: €{attivo}")
+    pdf.drawString(30, 725, f"Energia Rinnovabile: {energia_rinnovabile}% | Riciclo: {riciclo}%")
+    pdf.drawString(30, 705, f"Formazione: {formazione}h | Infortuni: {infortuni}")
+    pdf.drawString(30, 685, "Commenti automatici:")
+    y = 670
     for c in commenti:
         pdf.drawString(40, y, f"- {c}")
         y -= 15
-    pdf.drawString(30, y - 20, "Commento del professionista:")
-    pdf.drawString(40, y - 35, commento_professionista[:90])  # Prima riga
-    if len(commento_professionista) > 90:
-        pdf.drawString(40, y - 50, commento_professionista[90:180])  # Seconda riga se necessario
+    if commento_professionista:
+        pdf.drawString(30, y - 10, "Nota del professionista:")
+        pdf.drawString(40, y - 25, commento_professionista[:100])
     pdf.save()
     buffer.seek(0)
-    st.download_button("📄 Scarica il PDF", buffer, file_name="report_esg_vsme.pdf", mime="application/pdf")
+    st.download_button("📄 Scarica PDF", buffer, file_name="bilancio_esg_vsme.pdf")
